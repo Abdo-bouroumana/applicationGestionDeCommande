@@ -80,7 +80,7 @@ public class ApplicationGestionApplication {
 //			userRepository.save(user);
 //			System.out.println("User saved!");
 
-			// Fetch by username
+
 			userRepository.findByUsername("abdo").ifPresentOrElse(
 					u -> System.out.println("User found: " + u.getEmail()),
 					() -> System.out.println("User not found")
@@ -88,11 +88,10 @@ public class ApplicationGestionApplication {
 
 			userRepository.deleteById(6L);
 
-			// Count users
 			long total = userRepository.countAll();
 			System.out.println("Total users: " + total);
 
-			// Fetch and show orders
+
 //			List<Orders> orders = orderRepository.findAllByIsDeletedFalse(0, 14);
 //			System.out.println("Orders before deletion:");
 //			orders.forEach(o -> System.out.println(" - " + o.getTitle() + " (" + o.getStatus() + ")"));
@@ -102,11 +101,11 @@ public class ApplicationGestionApplication {
 					() -> System.out.println("User not found 2")
 			);
 
-			// Soft delete
+
 //			orderRepository.softDeleteById(order.getId());
 //			System.out.println("Order soft deleted");
 
-			// Fetch again
+
 //			orders = orderRepository.findAllByIsDeletedFalse(0, 10);
 //			System.out.println("Orders after deletion:");
 //			orders.forEach(o -> System.out.println(" - " + o.getTitle()));
