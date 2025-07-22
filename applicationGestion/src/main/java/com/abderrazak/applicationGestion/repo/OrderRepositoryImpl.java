@@ -1,15 +1,17 @@
 package com.abderrazak.applicationGestion.repo;
 
 import com.abderrazak.applicationGestion.model.OrderStatus;
-import com.abderrazak.applicationGestion.model.Orders;
-import org.springframework.core.annotation.Order;
+import com.abderrazak.applicationGestion.model.Order;
+import com.abderrazak.applicationGestion.model.OrderType;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.stereotype.Repository;
 
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
+@Repository
 public class OrderRepositoryImpl implements OrderRepository {
     private final JdbcTemplate jdbcTemplate;
     private final OrderRowMapper orderRowMapper;
@@ -20,25 +22,23 @@ public class OrderRepositoryImpl implements OrderRepository {
     }
 
     @Override
-    public Orders save(Orders order) {
+    public Optional<Order> save(Order order) {
         String sql = """
-            INSERT INTO orders (user_id, title, type, quantity, status, comment, is_deleted)
-            VALUES (?, ?, ?, ?, ?, ?, ?)
+            INSERT INTO orders (user_id, title, type, quantity, comment)
+            VALUES (?, ?, ?, ?, ?)
         """;
         jdbcTemplate.update(sql,
-                order.getUserId(),
+                order.getUser_id(),
                 order.getTitle(),
                 order.getType().name(),
                 order.getQuantity(),
-                order.getStatus().name(),
-                order.getComment(),
-                order.isDeleted()
+                order.getComment()
         );
-        return order;
+        return findById(order.getId());
     }
 
     @Override
-    public Optional<Orders> findById(Long id) {
+    public Optional<Order> findById(Long id) {
         try {
             String sql = "SELECT * FROM orders WHERE id = ?";
             return Optional.ofNullable(jdbcTemplate.queryForObject(sql, orderRowMapper, id));
@@ -48,37 +48,42 @@ public class OrderRepositoryImpl implements OrderRepository {
     }
 
     @Override
-    public List<Orders> findByUserIdAndIsDeletedFalse(Long userId, int offset, int limit) {
-        String sql = "SELECT * FROM orders WHERE user_id = ? AND is_deleted = false LIMIT ? OFFSET ?";
-        return jdbcTemplate.query(sql, orderRowMapper, userId, limit, offset);
+    public List<Order> findByUserIdAndIsDeletedFalse(Long userId) {
+        String sql = "SELECT * FROM orders WHERE user_id = ? AND is_deleted = false";
+        return jdbcTemplate.query(sql, orderRowMapper, userId);
     }
 
     @Override
-    public List<Orders> findAllByIsDeletedFalse(int offset, int limit) {
-        String sql = "SELECT * FROM orders WHERE is_deleted = false LIMIT ? OFFSET ?";
-        return jdbcTemplate.query(sql, orderRowMapper, limit, offset);
+    public List<Order> findAllByIsDeletedFalse() {
+        String sql = "SELECT * FROM orders WHERE is_deleted = false ";
+        return jdbcTemplate.query(sql, orderRowMapper);
     }
 
     @Override
-    public List<Orders> findByStatusAndIsDeletedFalse(OrderStatus status, int offset, int limit) {
-        String sql = "SELECT * FROM orders WHERE status = ? AND is_deleted = false LIMIT ? OFFSET ?";
-        return jdbcTemplate.query(sql, orderRowMapper, status.name(), limit, offset);
+    public List<Order> findByStatusAndIsDeletedFalse(OrderStatus status) {
+        String sql = "SELECT * FROM orders WHERE status = ? AND is_deleted = false ";
+        return jdbcTemplate.query(sql, orderRowMapper, status.name());
+    }
+
+    public List<Order> findByTypeAndIsDeletedFalse(OrderType type){
+        String sql = "SELECT * FROM orders WHERE type = ? AND is_deleted = false";
+        return jdbcTemplate.query(sql, orderRowMapper, type.name());
     }
 
     @Override
-    public List<Orders> findByUserIdAndStatusAndIsDeletedFalse(Long userId, OrderStatus status, int offset, int limit) {
+    public List<Order> findByUserIdAndStatusAndIsDeletedFalse(Long userId, OrderStatus status, int offset, int limit) {
         String sql = "SELECT * FROM orders WHERE user_id = ? AND status = ? AND is_deleted = false LIMIT ? OFFSET ?";
         return jdbcTemplate.query(sql, orderRowMapper, userId, status.name(), limit, offset);
     }
 
     @Override
-    public List<Orders> findByCreatedAtBetweenAndIsDeletedFalse(LocalDateTime start, LocalDateTime end, int offset, int limit) {
-        String sql = "SELECT * FROM orders WHERE created_at BETWEEN ? AND ? AND is_deleted = false LIMIT ? OFFSET ?";
-        return jdbcTemplate.query(sql, orderRowMapper, start, end, limit, offset);
+    public List<Order> findByCreatedAtBetweenAndIsDeletedFalse(LocalDateTime start, LocalDateTime end) {
+        String sql = "SELECT * FROM orders WHERE created_at BETWEEN ? AND ? AND is_deleted = false";
+        return jdbcTemplate.query(sql, orderRowMapper, start, end);
     }
 
     @Override
-    public boolean update(Orders order) {
+    public boolean update(Order order) {
         String sql = """
             UPDATE orders SET title = ?, type = ?, quantity = ?, status = ?, comment = ?, 
             updated_at = ?, is_deleted = ? WHERE id = ?
@@ -89,8 +94,8 @@ public class OrderRepositoryImpl implements OrderRepository {
                 order.getQuantity(),
                 order.getStatus().name(),
                 order.getComment(),
-                order.getUpdatedAt(),
-                order.isDeleted(),
+                LocalDateTime.now(),
+                order.isIs_deleted(),
                 order.getId()
         );
         return rows > 0;

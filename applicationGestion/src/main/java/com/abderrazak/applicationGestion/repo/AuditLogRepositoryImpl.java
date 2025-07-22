@@ -4,11 +4,14 @@ import com.abderrazak.applicationGestion.model.AuditAction;
 import com.abderrazak.applicationGestion.model.AuditLog;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.stereotype.Repository;
 
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
+
+@Repository
 public class AuditLogRepositoryImpl implements AuditLogRepository {
     private final JdbcTemplate jdbcTemplate;
     private final AuditLogRowMapper auditLogRowMapper;
@@ -25,10 +28,10 @@ public class AuditLogRepositoryImpl implements AuditLogRepository {
             VALUES (?, ?, ?, ?)
         """;
         jdbcTemplate.update(sql,
-                auditLog.getUserId(),
-                auditLog.getTableName(),
+                auditLog.getUser_id(),
+                auditLog.getTable_name(),
                 auditLog.getAction().name(),
-                auditLog.getCreatedAt()
+                auditLog.getCreated_at()
         );
         return auditLog;
     }

@@ -1,12 +1,15 @@
 package com.abderrazak.applicationGestion.model;
 
 
+import org.hibernate.validator.internal.constraintvalidators.bv.time.futureorpresent.FutureOrPresentValidatorForDate;
+import org.springframework.data.relational.core.mapping.Column;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDateTime;
 
 @Component
-public class Users {
+public class User {
+
     private long id;
     private String username;
     private String email;
@@ -16,10 +19,10 @@ public class Users {
     private boolean first_login;
     private LocalDateTime created_at;
 
-    public Users() {
+    public User() {
     }
 
-    public Users(long id, String username, String email, String password, Role role, LocalDateTime created_at) {
+    public User(long id, String username, String email, String password, Role role, LocalDateTime created_at) {
         this.id = id;
         this.username = username;
         this.email = email;
@@ -30,7 +33,7 @@ public class Users {
         this.created_at = created_at;
     }
 
-    public Users(long id, String email, String username, String password, Role role, boolean is_active, boolean first_login, LocalDateTime created_at) {
+    public User(long id, String email, String username, String password, Role role, boolean is_active, boolean first_login, LocalDateTime created_at) {
         this.id = id;
         this.email = email;
         this.username = username;

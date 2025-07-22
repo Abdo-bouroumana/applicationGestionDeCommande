@@ -7,16 +7,18 @@ import java.time.LocalDateTime;
 import com.abderrazak.applicationGestion.model.AuditAction;
 import com.abderrazak.applicationGestion.model.AuditLog;
 import org.springframework.jdbc.core.RowMapper;
+import org.springframework.stereotype.Component;
 
+@Component
 public class AuditLogRowMapper implements RowMapper<AuditLog> {
     @Override
     public AuditLog mapRow(ResultSet rs, int rowNum) throws SQLException {
         AuditLog audit = new AuditLog();
         audit.setId(rs.getLong("id"));
-        audit.setUserId(rs.getLong("user_id"));
-        audit.setTableName(rs.getString("table_name"));
+        audit.setUser_id(rs.getLong("user_id"));
+        audit.setTable_name(rs.getString("table_name"));
         audit.setAction(AuditAction.valueOf(rs.getString("action")));
-        audit.setCreatedAt(rs.getObject("created_at", LocalDateTime.class));
+        audit.setCreated_at(rs.getObject("created_at", LocalDateTime.class));
         return audit;
     }
 }

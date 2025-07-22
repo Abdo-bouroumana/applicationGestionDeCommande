@@ -1,13 +1,15 @@
 package com.abderrazak.applicationGestion.repo;
 
 import com.abderrazak.applicationGestion.model.Role;
-import com.abderrazak.applicationGestion.model.Users;
+import com.abderrazak.applicationGestion.model.User;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.stereotype.Repository;
 
 import java.util.List;
 import java.util.Optional;
 
+@Repository
 public class UserRepositoryImpl implements UserRepository {
     private final JdbcTemplate jdbcTemplate;
     private final UserRowMapper userRowMapper;
@@ -18,24 +20,22 @@ public class UserRepositoryImpl implements UserRepository {
     }
 
     @Override
-    public Users save(Users user) {
+    public Optional<User> save(User user) {
         String sql = """
-            INSERT INTO users (username, email, password, role, is_active, first_login)
-            VALUES (?, ?, ?, ?, ?, ?)
+            INSERT INTO users (username, email, password, role)
+            VALUES (?, ?, ?, ?)
         """;
         jdbcTemplate.update(sql,
                 user.getUsername(),
                 user.getEmail(),
                 user.getPassword(),
-                user.getRole().name(),
-                user.getIs_active(),
-                user.getFirst_login()
+                user.getRole().name()
         );
-        return user;
+        return findByUsername(user.getUsername());
     }
 
     @Override
-    public Optional<Users> findById(Long id) {
+    public Optional<User> findById(Long id) {
         try {
             String sql = "SELECT * FROM users WHERE id = ?";
             return Optional.ofNullable(jdbcTemplate.queryForObject(sql, userRowMapper, id));
@@ -45,7 +45,7 @@ public class UserRepositoryImpl implements UserRepository {
     }
 
     @Override
-    public Optional<Users> findByEmail(String email) {
+    public Optional<User> findByEmail(String email) {
         try {
             String sql = "SELECT * FROM users WHERE email = ?";
             return Optional.ofNullable(jdbcTemplate.queryForObject(sql, userRowMapper, email));
@@ -55,7 +55,7 @@ public class UserRepositoryImpl implements UserRepository {
     }
 
     @Override
-    public Optional<Users> findByUsername(String username) {
+    public Optional<User> findByUsername(String username) {
         try {
             String sql = "SELECT * FROM users WHERE username = ?";
             return Optional.ofNullable(jdbcTemplate.queryForObject(sql, userRowMapper, username));
@@ -65,25 +65,25 @@ public class UserRepositoryImpl implements UserRepository {
     }
 
     @Override
-    public List<Users> findAll(int offset, int limit) {
-        String sql = "SELECT * FROM users LIMIT ? OFFSET ?";
-        return jdbcTemplate.query(sql, userRowMapper, limit, offset);
+    public List<User> findAll() {
+        String sql = "SELECT * FROM users ";
+        return jdbcTemplate.query(sql, userRowMapper);
     }
 
     @Override
-    public List<Users> findAllByIsActiveTrue(int offset, int limit) {
-        String sql = "SELECT * FROM users WHERE is_active = true LIMIT ? OFFSET ?";
-        return jdbcTemplate.query(sql, userRowMapper, limit, offset);
+    public List<User> findAllByIsActive(boolean is_active) {
+        String sql = "SELECT * FROM users WHERE is_active = ?";
+        return jdbcTemplate.query(sql, userRowMapper, is_active);
     }
 
     @Override
-    public List<Users> findAllByRole(Role role, int offset, int limit) {
-        String sql = "SELECT * FROM users WHERE role = ? LIMIT ? OFFSET ?";
-        return jdbcTemplate.query(sql, userRowMapper, role.name(), limit, offset);
+    public List<User> findAllByRole(Role role) {
+        String sql = "SELECT * FROM users WHERE role = ? ";
+        return jdbcTemplate.query(sql, userRowMapper, role.name());
     }
 
     @Override
-    public boolean update(Users user) {
+    public boolean update(User user) {
         String sql = """
             UPDATE users SET username = ?, email = ?, password = ?, role = ?, 
             is_active = ?, first_login = ?, created_at = ? WHERE id = ?
@@ -103,7 +103,7 @@ public class UserRepositoryImpl implements UserRepository {
 
     @Override
     public boolean deleteById(Long id) {
-        String sql = "DELETE FROM users WHERE id = ?";
+        String sql = "UPDATE users SET is_deleted = true WHERE id = ?";
         return jdbcTemplate.update(sql, id) > 0;
     }
 

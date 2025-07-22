@@ -2,18 +2,18 @@ package com.abderrazak.applicationGestion.model;
 
 import java.time.LocalDateTime;
 
-public class Orders {
+public class Order {
 
     private long id;
-    private long userId;
+    private long user_id;
     private String title;
     private OrderType type;
     private int quantity;
     private OrderStatus status;
     private String comment;
-    private LocalDateTime createdAt;
-    private LocalDateTime updatedAt;
-    private boolean isDeleted;
+    private LocalDateTime created_at;
+    private LocalDateTime updated_at;
+    private boolean is_deleted;
 
     public long getId() {
         return id;
@@ -23,12 +23,12 @@ public class Orders {
         this.id = id;
     }
 
-    public long getUserId() {
-        return userId;
+    public long getUser_id() {
+        return user_id;
     }
 
-    public void setUserId(long userId) {
-        this.userId = userId;
+    public void setUser_id(long user_id) {
+        this.user_id = user_id;
     }
 
     public String getTitle() {
@@ -71,27 +71,27 @@ public class Orders {
         this.status = status;
     }
 
-    public LocalDateTime getCreatedAt() {
-        return createdAt;
+    public LocalDateTime getCreated_at() {
+        return created_at;
     }
 
-    public void setCreatedAt(LocalDateTime createdAt) {
-        this.createdAt = createdAt;
+    public void setCreated_at(LocalDateTime created_at) {
+        this.created_at = created_at;
     }
 
-    public LocalDateTime getUpdatedAt() {
-        return updatedAt;
+    public LocalDateTime getUpdated_at() {
+        return updated_at;
     }
 
-    public void setUpdatedAt(LocalDateTime updatedAt) {
-        this.updatedAt = updatedAt;
+    public void setUpdated_at(LocalDateTime updated_at) {
+        this.updated_at = updated_at;
     }
 
-    public boolean isDeleted() {
-        return isDeleted;
+    public boolean isIs_deleted() {
+        return is_deleted;
     }
 
     public void setIs_Deleted(boolean deleted) {
-        isDeleted = deleted;
+        is_deleted = deleted;
     }
 }

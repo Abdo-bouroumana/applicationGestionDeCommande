@@ -1,18 +1,20 @@
 package com.abderrazak.applicationGestion.repo;
 
 import com.abderrazak.applicationGestion.model.Role;
-import com.abderrazak.applicationGestion.model.Users;
+import com.abderrazak.applicationGestion.model.User;
 import org.springframework.jdbc.core.RowMapper;
+import org.springframework.stereotype.Component;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.time.LocalDateTime;
 
-public class UserRowMapper implements RowMapper<Users> {
+@Component
+public class UserRowMapper implements RowMapper<User> {
 
     @Override
-    public Users mapRow(ResultSet rs, int rowNum) throws SQLException {
-        Users user = new Users();
+    public User mapRow(ResultSet rs, int rowNum) throws SQLException {
+        User user = new User();
         user.setId(rs.getLong("id"));
         user.setUsername(rs.getString("username"));
         user.setEmail(rs.getString("email"));
